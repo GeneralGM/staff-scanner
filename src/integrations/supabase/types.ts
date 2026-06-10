@@ -14,13 +14,139 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      attendance: {
+        Row: {
+          check_in: string | null
+          check_out: string | null
+          created_at: string
+          date: string
+          employee_id: string
+          id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          check_in?: string | null
+          check_out?: string | null
+          created_at?: string
+          date: string
+          employee_id: string
+          id?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          check_in?: string | null
+          check_out?: string | null
+          created_at?: string
+          date?: string
+          employee_id?: string
+          id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      departments: {
+        Row: {
+          code: number
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          code: number
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          code?: number
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      employees: {
+        Row: {
+          created_at: string
+          department_id: string
+          employee_code: string
+          full_name: string
+          gender: number
+          id: string
+          seq: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          department_id: string
+          employee_code: string
+          full_name: string
+          gender: number
+          id?: string
+          seq: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          department_id?: string
+          employee_code?: string
+          full_name?: string
+          gender?: number
+          id?: string
+          seq?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employees_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      create_employee: {
+        Args: {
+          p_department_code: number
+          p_full_name: string
+          p_gender: number
+        }
+        Returns: {
+          created_at: string
+          department_id: string
+          employee_code: string
+          full_name: string
+          gender: number
+          id: string
+          seq: number
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "employees"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      mark_absentees: { Args: never; Returns: number }
+      scan_qr: { Args: { p_code: string }; Returns: Json }
     }
     Enums: {
       [_ in never]: never
