@@ -9,38 +9,152 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedScannerRouteImport } from './routes/_authenticated/scanner'
+import { Route as AuthenticatedMasterRouteImport } from './routes/_authenticated/master'
+import { Route as AuthenticatedManageRouteImport } from './routes/_authenticated/manage'
+import { Route as AuthenticatedDirectoryRouteImport } from './routes/_authenticated/directory'
+import { Route as AuthenticatedDirectoryIdRouteImport } from './routes/_authenticated/directory.$id'
+import { Route as ApiPublicCronMarkAbsenteesRouteImport } from './routes/api/public/cron/mark-absentees'
 
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedScannerRoute = AuthenticatedScannerRouteImport.update({
+  id: '/scanner',
+  path: '/scanner',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMasterRoute = AuthenticatedMasterRouteImport.update({
+  id: '/master',
+  path: '/master',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedManageRoute = AuthenticatedManageRouteImport.update({
+  id: '/manage',
+  path: '/manage',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDirectoryRoute = AuthenticatedDirectoryRouteImport.update({
+  id: '/directory',
+  path: '/directory',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDirectoryIdRoute =
+  AuthenticatedDirectoryIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedDirectoryRoute,
+  } as any)
+const ApiPublicCronMarkAbsenteesRoute =
+  ApiPublicCronMarkAbsenteesRouteImport.update({
+    id: '/api/public/cron/mark-absentees',
+    path: '/api/public/cron/mark-absentees',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/directory': typeof AuthenticatedDirectoryRouteWithChildren
+  '/manage': typeof AuthenticatedManageRoute
+  '/master': typeof AuthenticatedMasterRoute
+  '/scanner': typeof AuthenticatedScannerRoute
+  '/directory/$id': typeof AuthenticatedDirectoryIdRoute
+  '/api/public/cron/mark-absentees': typeof ApiPublicCronMarkAbsenteesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/directory': typeof AuthenticatedDirectoryRouteWithChildren
+  '/manage': typeof AuthenticatedManageRoute
+  '/master': typeof AuthenticatedMasterRoute
+  '/scanner': typeof AuthenticatedScannerRoute
+  '/directory/$id': typeof AuthenticatedDirectoryIdRoute
+  '/api/public/cron/mark-absentees': typeof ApiPublicCronMarkAbsenteesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_authenticated/directory': typeof AuthenticatedDirectoryRouteWithChildren
+  '/_authenticated/manage': typeof AuthenticatedManageRoute
+  '/_authenticated/master': typeof AuthenticatedMasterRoute
+  '/_authenticated/scanner': typeof AuthenticatedScannerRoute
+  '/_authenticated/directory/$id': typeof AuthenticatedDirectoryIdRoute
+  '/api/public/cron/mark-absentees': typeof ApiPublicCronMarkAbsenteesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/directory'
+    | '/manage'
+    | '/master'
+    | '/scanner'
+    | '/directory/$id'
+    | '/api/public/cron/mark-absentees'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/directory'
+    | '/manage'
+    | '/master'
+    | '/scanner'
+    | '/directory/$id'
+    | '/api/public/cron/mark-absentees'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/directory'
+    | '/_authenticated/manage'
+    | '/_authenticated/master'
+    | '/_authenticated/scanner'
+    | '/_authenticated/directory/$id'
+    | '/api/public/cron/mark-absentees'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  ApiPublicCronMarkAbsenteesRoute: typeof ApiPublicCronMarkAbsenteesRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +162,88 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/scanner': {
+      id: '/_authenticated/scanner'
+      path: '/scanner'
+      fullPath: '/scanner'
+      preLoaderRoute: typeof AuthenticatedScannerRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/master': {
+      id: '/_authenticated/master'
+      path: '/master'
+      fullPath: '/master'
+      preLoaderRoute: typeof AuthenticatedMasterRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/manage': {
+      id: '/_authenticated/manage'
+      path: '/manage'
+      fullPath: '/manage'
+      preLoaderRoute: typeof AuthenticatedManageRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/directory': {
+      id: '/_authenticated/directory'
+      path: '/directory'
+      fullPath: '/directory'
+      preLoaderRoute: typeof AuthenticatedDirectoryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/directory/$id': {
+      id: '/_authenticated/directory/$id'
+      path: '/$id'
+      fullPath: '/directory/$id'
+      preLoaderRoute: typeof AuthenticatedDirectoryIdRouteImport
+      parentRoute: typeof AuthenticatedDirectoryRoute
+    }
+    '/api/public/cron/mark-absentees': {
+      id: '/api/public/cron/mark-absentees'
+      path: '/api/public/cron/mark-absentees'
+      fullPath: '/api/public/cron/mark-absentees'
+      preLoaderRoute: typeof ApiPublicCronMarkAbsenteesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface AuthenticatedDirectoryRouteChildren {
+  AuthenticatedDirectoryIdRoute: typeof AuthenticatedDirectoryIdRoute
+}
+
+const AuthenticatedDirectoryRouteChildren: AuthenticatedDirectoryRouteChildren =
+  {
+    AuthenticatedDirectoryIdRoute: AuthenticatedDirectoryIdRoute,
+  }
+
+const AuthenticatedDirectoryRouteWithChildren =
+  AuthenticatedDirectoryRoute._addFileChildren(
+    AuthenticatedDirectoryRouteChildren,
+  )
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedDirectoryRoute: typeof AuthenticatedDirectoryRouteWithChildren
+  AuthenticatedManageRoute: typeof AuthenticatedManageRoute
+  AuthenticatedMasterRoute: typeof AuthenticatedMasterRoute
+  AuthenticatedScannerRoute: typeof AuthenticatedScannerRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedDirectoryRoute: AuthenticatedDirectoryRouteWithChildren,
+  AuthenticatedManageRoute: AuthenticatedManageRoute,
+  AuthenticatedMasterRoute: AuthenticatedMasterRoute,
+  AuthenticatedScannerRoute: AuthenticatedScannerRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  ApiPublicCronMarkAbsenteesRoute: ApiPublicCronMarkAbsenteesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
