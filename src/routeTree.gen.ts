@@ -18,7 +18,6 @@ import { Route as AuthenticatedManageRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedDirectoryRouteImport } from './routes/_authenticated/directory'
 import { Route as AuthenticatedDirectoryIdRouteImport } from './routes/_authenticated/directory.$id'
 import { Route as ApiPublicCronMarkAbsenteesRouteImport } from './routes/api/public/cron/mark-absentees'
-import { Route as ApiPublicAdminWipeUsersRouteImport } from './routes/api/public/admin/wipe-users'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -66,11 +65,6 @@ const ApiPublicCronMarkAbsenteesRoute =
     path: '/api/public/cron/mark-absentees',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicAdminWipeUsersRoute = ApiPublicAdminWipeUsersRouteImport.update({
-  id: '/api/public/admin/wipe-users',
-  path: '/api/public/admin/wipe-users',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -80,7 +74,6 @@ export interface FileRoutesByFullPath {
   '/master': typeof AuthenticatedMasterRoute
   '/scanner': typeof AuthenticatedScannerRoute
   '/directory/$id': typeof AuthenticatedDirectoryIdRoute
-  '/api/public/admin/wipe-users': typeof ApiPublicAdminWipeUsersRoute
   '/api/public/cron/mark-absentees': typeof ApiPublicCronMarkAbsenteesRoute
 }
 export interface FileRoutesByTo {
@@ -91,7 +84,6 @@ export interface FileRoutesByTo {
   '/master': typeof AuthenticatedMasterRoute
   '/scanner': typeof AuthenticatedScannerRoute
   '/directory/$id': typeof AuthenticatedDirectoryIdRoute
-  '/api/public/admin/wipe-users': typeof ApiPublicAdminWipeUsersRoute
   '/api/public/cron/mark-absentees': typeof ApiPublicCronMarkAbsenteesRoute
 }
 export interface FileRoutesById {
@@ -104,7 +96,6 @@ export interface FileRoutesById {
   '/_authenticated/master': typeof AuthenticatedMasterRoute
   '/_authenticated/scanner': typeof AuthenticatedScannerRoute
   '/_authenticated/directory/$id': typeof AuthenticatedDirectoryIdRoute
-  '/api/public/admin/wipe-users': typeof ApiPublicAdminWipeUsersRoute
   '/api/public/cron/mark-absentees': typeof ApiPublicCronMarkAbsenteesRoute
 }
 export interface FileRouteTypes {
@@ -117,7 +108,6 @@ export interface FileRouteTypes {
     | '/master'
     | '/scanner'
     | '/directory/$id'
-    | '/api/public/admin/wipe-users'
     | '/api/public/cron/mark-absentees'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -128,7 +118,6 @@ export interface FileRouteTypes {
     | '/master'
     | '/scanner'
     | '/directory/$id'
-    | '/api/public/admin/wipe-users'
     | '/api/public/cron/mark-absentees'
   id:
     | '__root__'
@@ -140,7 +129,6 @@ export interface FileRouteTypes {
     | '/_authenticated/master'
     | '/_authenticated/scanner'
     | '/_authenticated/directory/$id'
-    | '/api/public/admin/wipe-users'
     | '/api/public/cron/mark-absentees'
   fileRoutesById: FileRoutesById
 }
@@ -148,7 +136,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
-  ApiPublicAdminWipeUsersRoute: typeof ApiPublicAdminWipeUsersRoute
   ApiPublicCronMarkAbsenteesRoute: typeof ApiPublicCronMarkAbsenteesRoute
 }
 
@@ -217,13 +204,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCronMarkAbsenteesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/admin/wipe-users': {
-      id: '/api/public/admin/wipe-users'
-      path: '/api/public/admin/wipe-users'
-      fullPath: '/api/public/admin/wipe-users'
-      preLoaderRoute: typeof ApiPublicAdminWipeUsersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -262,9 +242,18 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
-  ApiPublicAdminWipeUsersRoute: ApiPublicAdminWipeUsersRoute,
   ApiPublicCronMarkAbsenteesRoute: ApiPublicCronMarkAbsenteesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
