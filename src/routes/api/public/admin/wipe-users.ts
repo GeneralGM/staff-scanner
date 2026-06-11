@@ -1,13 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 export const Route = createFileRoute("/api/public/admin/wipe-users")({
   server: {
     handlers: {
       POST: async () => {
-        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const deleted: string[] = [];
         let page = 1;
-        // paginate through users and delete each
         while (true) {
           const { data, error } = await supabaseAdmin.auth.admin.listUsers({ page, perPage: 200 });
           if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500 });
@@ -19,9 +18,7 @@ export const Route = createFileRoute("/api/public/admin/wipe-users")({
           if (data.users.length < 200) break;
           page += 1;
         }
-        return new Response(JSON.stringify({ deleted: deleted.length }), {
-          headers: { "content-type": "application/json" },
-        });
+        return Response.json({ ok: true, deleted: deleted.length });
       },
     },
   },
