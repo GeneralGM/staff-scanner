@@ -27,6 +27,10 @@ function AuthPage() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (password.length < 10) {
+      toast.error("Password must be at least 10 characters");
+      return;
+    }
     setLoading(true);
     try {
       if (mode === "signin") {
